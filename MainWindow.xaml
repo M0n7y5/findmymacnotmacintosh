@@ -1,0 +1,113 @@
+﻿<rxui:ReactiveWindow
+    x:Class="FindMyMACNotMacintosh.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:FindMyMACNotMacintosh"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:rxui="http://reactiveui.net"
+    Title="Find My MAC Not Macintosh"
+    Width="454"
+    Height="407"
+    x:TypeArguments="local:MainWindowViewModel"
+    mc:Ignorable="d">
+    <DockPanel>
+
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Network Devices: " />
+                    <Label x:Name="devCount" Content="25" />
+                </StackPanel>
+            </StatusBarItem>
+        </StatusBar>
+
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition />
+                <RowDefinition Height="35" />
+            </Grid.RowDefinitions>
+
+            <TextBlock
+                HorizontalAlignment="Center"
+                FontFamily="Comic Sans MS"
+                FontSize="17"
+                Text="Find my MAC Not Macintosh" />
+
+            <GroupBox Grid.Row="1" Header="Devices">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid Margin="0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Filter:" />
+                        <TextBox
+                            x:Name="FilterBox"
+                            Grid.Column="1"
+                            VerticalContentAlignment="Center" />
+                    </Grid>
+                    <ListView x:Name="DevicesList" Grid.Row="1">
+                        <ListView.ItemTemplate>
+                            <DataTemplate />
+                        </ListView.ItemTemplate>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn
+                                    Width="150"
+                                    DisplayMemberBinding="{Binding IP}"
+                                    Header="IP Address" />
+                                <GridViewColumn
+                                    Width="200"
+                                    DisplayMemberBinding="{Binding MAC}"
+                                    Header="MAC Address" />
+                                <!--<GridViewColumn Header="IP Address" />-->
+                            </GridView>
+                        </ListView.View>
+
+                    </ListView>
+                </Grid>
+            </GroupBox>
+
+            <Grid Grid.Row="2" Margin="0,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="125" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+                <Grid>
+                    <ProgressBar x:Name="ProgBar" FlowDirection="LeftToRight" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Text="{Binding ElementName=ProgBar, Path=Value, StringFormat={}{0:0}%}" />
+                </Grid>
+                <Label Grid.Column="1" Content="Subnet IP (CIDR): " />
+                <TextBox
+                    x:Name="SubnetBox"
+                    Grid.Column="2"
+                    VerticalContentAlignment="Center"
+                    Text="192.168.1.0/24"
+                    TextAlignment="Center" />
+                <Button
+                    x:Name="btnStart"
+                    Grid.Column="3"
+                    Width="40"
+                    Margin="5,0"
+                    Content="Scan" />
+                <Button
+                    x:Name="btnAbort"
+                    Grid.Column="4"
+                    Width="40"
+                    Content="Abort" />
+            </Grid>
+        </Grid>
+    </DockPanel>
+</rxui:ReactiveWindow>
