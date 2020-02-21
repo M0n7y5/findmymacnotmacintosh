@@ -6,5 +6,7 @@
 
         public string MAC { get; set; }
 
+        public string Vendor { get; set; }
+
     }
 }

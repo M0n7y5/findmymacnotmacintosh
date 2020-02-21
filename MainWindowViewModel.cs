@@ -1,11 +1,17 @@
-﻿using DynamicData;
+﻿using CsvHelper;
+using DynamicData;
+using DynamicData.Binding;
 using FindMyMACNotMacintosh.Models;
 using FindMyMACNotMacintosh.Utils;
+using Nito.AsyncEx;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reactive;
@@ -20,10 +26,10 @@ namespace FindMyMACNotMacintosh
     public class MainWindowViewModel : ReactiveObject
     {
         [Reactive]
-        public ObservableCollection<NetworkDevice> Devices { get; private set; }
+        public ObservableCollection<NetworkDevice> Devices { get; private set; } = new ObservableCollection<NetworkDevice>();
 
         [Reactive]
-        private ObservableCollection<NetworkDevice> ScannedDevices { get; set; }
+        private List<NetworkDevice> ScannedDevices { get; set; } = new List<NetworkDevice>();
 
         [Reactive]
         public int ScanProgress { get; private set; }
@@ -31,12 +37,15 @@ namespace FindMyMACNotMacintosh
         [Reactive]
         public string Subnet { get; set; }
 
-        public ReactiveCommand<Unit, ScanResultWithProgress> StartScan { get; }
+        public ReactiveCommand<Unit, NetworkDevice> StartScan { get; }
 
         public ReactiveCommand<Unit, Unit> AbortScan { get; }
 
         [Reactive]
         public string FilterText { get; set; }
+
+        [Reactive]
+        public long ElapsedTime { get; private set; }
 
         // ----------------------------------------------------------------------
         private CancellationTokenSource _cts;
@@ -47,6 +56,14 @@ namespace FindMyMACNotMacintosh
 
         private string[] _filter;
 
+        private int _numberIPToScan;
+
+        private int _finished;
+
+        private static readonly AsyncLazy<List<MACRecord>> _macRecords = new AsyncLazy<List<MACRecord>>(LoadMACRecords);
+
+        private IDisposable _stopwatch;
+
         [Reactive]
         private bool canScan { get; set; }
 
@@ -55,25 +72,60 @@ namespace FindMyMACNotMacintosh
         public MainWindowViewModel()
         {
             _cts = new CancellationTokenSource();
-            Devices = new ObservableCollection<NetworkDevice>();
-            ScannedDevices = new ObservableCollection<NetworkDevice>();
+            //ScannedDevices = new ObservableCollection<NetworkDevice>();
+            //_stopwatch = Observable
+            //    .Interval(TimeSpan.FromMilliseconds(1))
+            //    .TakeUntil(StartScan.IsExecuting)
+            //    .ObserveOnDispatcher();
+            _macRecords.Start();
 
             this.WhenAnyValue(
                 x => x.Subnet)
                 .Subscribe(UpdateIPAndNet);
 
+            //_stopwatch.Subscribe(x => ElapsedTime = TimeSpan.FromMilliseconds(x).Seconds);
+
+            //ScannedDevices.Connect().Bind(Devices).Subscribe();
+            //ScannedDevices
+            //    .Connect();
+                //.Filter(x =>
+                //    FilterText.Contains(x.IP) ||
+                //    FilterText.Contains(x.MAC) ||
+                //    //FilterText.Contains(x.Vendor ?? "") ||
+                //    FilterText.Contains(""))
+                //.Bind(Devices)
+                //.Subscribe();
+
             // Command Init
-            StartScan = ReactiveCommand.CreateFromObservable<ScanResultWithProgress>(
+            StartScan = ReactiveCommand.CreateFromObservable(
                 () => StartScanHandler()
                     .ObserveOn(RxApp.TaskpoolScheduler)
-                    .TakeUntil(AbortScan), 
+                    .TakeUntil(AbortScan)
+                    .Finally(() =>
+                    {
+                        _stopwatch.Dispose();
+                    }),
                 this.WhenAnyValue(x => x.canScan));
             AbortScan = ReactiveCommand.Create(() => { }, StartScan.IsExecuting);
 
-            StartScan.Subscribe(UpdateProgressAndDevices);
+            StartScan.Subscribe(async x => await UpdateProgressAndDevices(x));
             StartScan.ThrownExceptions.Subscribe(x => Console.WriteLine(x.Message));
 
             this.WhenAnyValue(x => x.FilterText).Subscribe(x => UpdateDevices());
+
+        }
+
+        private static async Task<List<MACRecord>> LoadMACRecords()
+        {
+            return await Task.Run(() =>
+            {
+                using (var text = new StringReader(Resources.oui))
+                using (var csv = new CsvReader(text, CultureInfo.InvariantCulture))
+                {
+                    csv.Parser.Configuration.Delimiter = ",";
+                    return csv.GetRecords<MACRecord>().ToList();
+                }
+            });
         }
 
         private void UpdateIPAndNet(string subnet)
@@ -109,123 +161,111 @@ namespace FindMyMACNotMacintosh
         void UpdateDevices()
         {
 
+            //Devices.Clear
+            //    .Connect()
+            //    .Filter(x =>
+            //        FilterText.Contains(x.IP) ||
+            //        FilterText.Contains(x.MAC) ||
+            //        //FilterText.Contains(x.Vendor ?? "") ||
+            //        FilterText.Contains("")).obser;
+
+            //Devices = ScannedDevices
+            //    .ToObservableChangeSet()
+            //    .Filter(x => FilterText.Contains(x.IP) ||
+            //        FilterText.Contains(x.MAC) ||
+            //        //FilterText.Contains(x.Vendor ?? "") ||
+            //        FilterText.Contains(""))
+            //    .AsObservableList();
+
+            //if (string.IsNullOrEmpty(FilterText))
+            //    FilterText = string.Empty;
+
+            var tmp = ScannedDevices
+                .Where(x =>
+                    string.IsNullOrEmpty(FilterText) ||
+                    x.IP.Contains(FilterText) ||
+                    x.MAC.Contains(FilterText) ||
+                    (x.Vendor?.Contains(FilterText, StringComparison.InvariantCultureIgnoreCase) ?? false)
+                    //FilterText.Contains("")
+                    ).ToList();
+
             Devices.Clear();
-            Devices.AddRange(
-                ScannedDevices
-                .Where(x => 
-                    // If FilterText is empty add everything to list
-                    string.IsNullOrWhiteSpace(FilterText) || 
-                    // If FilterText is NOT empty add only filtered items
-                    (
-                    //x.IP.Contains(FilterText) && 
-                    x.MAC.Contains(FilterText)))
-                );
+            Devices.AddRange(tmp);
         }
 
-        void UpdateProgressAndDevices(ScanResultWithProgress scan)
+        async Task UpdateProgressAndDevices(NetworkDevice device)
         {
-            if (scan.Device != null)
-                if (!string.IsNullOrEmpty(scan.Device.MAC))
-                    ScannedDevices.Add(scan.Device);
+            if (device != null)
+                if (!string.IsNullOrEmpty(device.MAC))
+                {
+                    var rec = await _macRecords;
+                    device.Vendor = rec
+                        .FirstOrDefault(
+                            x => x.Assigment.Equals(
+                                device.MAC
+                                    .Substring(0, 8)
+                                    .Replace(":", "")
+                                , StringComparison.InvariantCultureIgnoreCase))
+                        ?.OrganizationName;
+                    ScannedDevices.Add(device);
+                }
 
-            ScanProgress = scan.Progress;
+
+            ScanProgress = Convert.ToInt32((((float)_finished++ / _numberIPToScan) * 100));
             UpdateDevices();
         }
 
-        IObservable<ScanResultWithProgress> StartScanHandler()
+        IObservable<NetworkDevice> StartScanHandler()
         {
             ScannedDevices.Clear();
-            Devices.Clear();
+            //Devices.Clear();
 
-            return Observable.Create<ScanResultWithProgress>((obs, cts) =>
+            _stopwatch = Observable
+                .Interval(TimeSpan.FromMilliseconds(1), RxApp.MainThreadScheduler)
+                //.TakeUntil(StartScan.CanExecute)   
+                .ObserveOnDispatcher()
+                .SubscribeOnDispatcher()
+                .Subscribe(x => ElapsedTime = x);
+
+
+            return Observable.Create<NetworkDevice>((obs, cts) =>
             {
                 return Task.Run(async () =>
                 {
-
                     var listIps = IPCalc.GetListIpInNetwork(IPAddress.Parse(_ip), _net);
-                    int finished = 0;
+                    _finished = 0;
+                    _numberIPToScan = listIps.Count;
 
                     listIps.AsParallel()
                         .WithCancellation(cts)
-                        .WithDegreeOfParallelism(20)                   
+                        .WithMergeOptions(ParallelMergeOptions.NotBuffered)
+                        .WithDegreeOfParallelism(_numberIPToScan)
                         .ForAll(x =>
-                       {
-                           if (cts.IsCancellationRequested)
-                               return;
+                        {
+                            if (cts.IsCancellationRequested)
+                                return;
 
-                           string mac = "";
-                           //var prog = (((float)item.index / listIps.Count) * 100);
-                           try
-                           {
-                               mac = NetworkInterop.GetMACAdrByIp(x);
+                            string mac = "";
 
-                           }
-                           catch (Exception ex)
-                           {
-                               Interlocked.Increment(ref finished);
+                            if (!NetworkInterop.TryGetMACAdrByIp(x, out mac))
+                            {
+                                if (obs is null)
+                                    return;
 
-                               if (obs is null)
-                                   return;
+                                obs.OnNext(null);
+                                return;
+                            }
 
-                               obs.OnNext(new ScanResultWithProgress()
-                               {
-                                   Device = null,
-                                   Progress = Convert.ToInt32((((float)finished / listIps.Count) * 100))
-                               });
+                            if (obs is null)
+                                return;
 
-                               return;
-                           }
-
-                           Interlocked.Increment(ref finished);
-                           if (obs is null)
-                               return;
-                           obs.OnNext(new ScanResultWithProgress()
-                           {
-                               Device = new NetworkDevice()
-                               {
-                                   IP = x.ToString(),
-                                   MAC = mac
-                               },
-                               Progress = Convert.ToInt32((((float)finished / listIps.Count) * 100))
-                           });
-
-                       });
-
-
-                    //foreach (var item in listIps.Select((ip, index) => new { ip, index }))
-                    //{
-                    //    string mac = "";
-                    //    var prog = (((float)item.index / listIps.Count) * 100);
-                    //    try
-                    //    {
-                    //        mac = NetworkInterop.GetMACAdrByIp(item.ip);
-                    //    }
-                    //    catch (Exception ex)
-                    //    {
-                    //        obs.OnNext(new ScanResultWithProgress()
-                    //        {
-                    //            Device = null,
-                    //            Progress = Convert.ToInt32(prog)
-                    //        });
-
-                    //        continue;
-                    //    }
-
-                    //    obs.OnNext(new ScanResultWithProgress()
-                    //    {
-                    //        Device = new NetworkDevice()
-                    //        {
-                    //            IP = item.ip.ToString(),
-                    //            MAC = mac
-                    //        },
-                    //        Progress = Convert.ToInt32(prog)
-                    //    });
-
-                    //    //await Task.Delay(500);
-                    //}
-
-
-                });
+                            obs.OnNext(new NetworkDevice()
+                            {
+                                IP = x.ToString(),
+                                MAC = mac.ToUpperInvariant()
+                            });
+                        });
+                }, cts);
             });
         }
     }

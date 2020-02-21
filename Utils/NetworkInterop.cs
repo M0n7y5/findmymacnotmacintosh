@@ -7,23 +7,28 @@ namespace FindMyMACNotMacintosh.Utils
 {
     public static class NetworkInterop
     {
-        public static string GetMACAdrByIp(IPAddress ip)
+        public static bool TryGetMACAdrByIp(IPAddress ip, out string mac)
         {
             uint uintAddress = BitConverter.ToUInt32(ip.GetAddressBytes(), 0);
             byte[] macAddr = new byte[6];
             int macAddrLen = macAddr.Length;
 
             int retValue = NativeMethods.SendARP(uintAddress, 0, macAddr, ref macAddrLen);
-            if (retValue != 0)
+            if (retValue != 0 || macAddrLen == 0)
             {
-                throw new Win32Exception(retValue, "SendARP failed.");
+                mac = "";
+
+                return false;
+                //throw new Win32Exception(retValue, "SendARP failed.");
             }
 
-            string[] mac = new string[macAddrLen];
+            string[] res = new string[macAddrLen];
             for (int i = 0; i < macAddrLen; i++)
-                mac[i] = macAddr[i].ToString("x2");
+                res[i] = macAddr[i].ToString("x2");
 
-            return string.Join(":", mac);
+            mac = string.Join(":", res);
+
+            return true;
         }
     }
 

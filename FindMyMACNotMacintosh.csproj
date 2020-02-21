@@ -6,18 +6,48 @@
     <UseWPF>true</UseWPF>
     <Platforms>AnyCPU;x86</Platforms>
     <ApplicationIcon>icon.ico</ApplicationIcon>
-    <PublishTrimmed>true</PublishTrimmed>
-    <PublishReadyToRun>true</PublishReadyToRun>
-    <PublishSingleFile>true</PublishSingleFile>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PublishTrimmed>false</PublishTrimmed>
+    <PublishReadyToRun>false</PublishReadyToRun>
+    <PublishSingleFile>false</PublishSingleFile>
+    <StartupObject>FindMyMACNotMacintosh.App</StartupObject>
+    <!--<RuntimeIdentifier>win-x64</RuntimeIdentifier>-->
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\oui.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AdonisUI" Version="1.13.0" />
+    <PackageReference Include="AdonisUI.ClassicTheme" Version="1.13.0" />
+    <PackageReference Include="CsvHelper" Version="15.0.0" />
+    <PackageReference Include="Nito.AsyncEx" Version="5.0.0" />
+    <PackageReference Include="Nito.AsyncEx.Tasks" Version="5.0.0" />
     <PackageReference Include="ReactiveUI" Version="11.1.23" />
     <PackageReference Include="ReactiveUI.Events.WPF" Version="11.1.23" />
     <PackageReference Include="ReactiveUI.Fody" Version="11.1.23" />
     <PackageReference Include="ReactiveUI.WPF" Version="11.1.23" />
+    <PackageReference Include="System.Linq.Async" Version="4.0.0" />
     
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\oui.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
