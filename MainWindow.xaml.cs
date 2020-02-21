@@ -16,11 +16,45 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using AdonisUI.Extensions;
 using AdonisUI;
+using AdonisUI.Controls;
 
 namespace FindMyMACNotMacintosh
 {
 
-    public class MainWindowBase : ReactiveWindow<MainWindowViewModel>
+    public class AdonisReactiveWindow<TViewModel> : AdonisWindow, IViewFor<TViewModel> where TViewModel : class
+    {
+        /// <summary>
+        /// The view model dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ViewModelProperty =
+            DependencyProperty.Register(
+                "ViewModel",
+                typeof(TViewModel),
+                typeof(ReactiveWindow<TViewModel>),
+                new PropertyMetadata(null));
+
+        /// <summary>
+        /// Gets the binding root view model.
+        /// </summary>
+        public TViewModel BindingRoot => ViewModel;
+
+        /// <inheritdoc/>
+        public TViewModel ViewModel
+        {
+            get => (TViewModel)GetValue(ViewModelProperty);
+            set => SetValue(ViewModelProperty, value);
+        }
+
+        /// <inheritdoc/>
+        object IViewFor.ViewModel
+        {
+            get => ViewModel;
+            set => ViewModel = (TViewModel)value;
+        }
+    }
+
+
+    public class MainWindowBase : AdonisReactiveWindow<MainWindowViewModel>
     { }
 
     /// <summary>
@@ -42,6 +76,12 @@ namespace FindMyMACNotMacintosh
             ViewModel = new MainWindowViewModel();
 
             //this.DevicesList.ItemsSource = ViewModel.Devices.Items;
+
+            this.cidr.ItemsSource = ViewModel.CIDR;
+            this.ipbox.ItemsSource = ViewModel.Interfaces;
+
+            this.cidr.SelectedIndex = 24;
+            this.ipbox.SelectedIndex = 0;
 
             this.WhenActivated(d => 
             {
@@ -66,8 +106,13 @@ namespace FindMyMACNotMacintosh
                     .DisposeWith(d);
 
                 this.Bind(ViewModel,
-                    vm => vm.Subnet,
-                    v => v.SubnetBox.Text)
+                    vm => vm.SelectedIPIndex,
+                    v => v.ipbox.SelectedIndex)
+                    .DisposeWith(d);
+
+                this.Bind(ViewModel,
+                    vm => vm.SelectedCIDR,
+                    v => v.cidr.SelectedValue)
                     .DisposeWith(d);
 
                 this.OneWayBind(ViewModel,

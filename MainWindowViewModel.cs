@@ -14,6 +14,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -31,21 +33,31 @@ namespace FindMyMACNotMacintosh
         [Reactive]
         private List<NetworkDevice> ScannedDevices { get; set; } = new List<NetworkDevice>();
 
+        public List<string> Interfaces { get; set; }
+
+        public List<uint> CIDR { get; } = Enumerable.Range(0, 32).Select(x => (uint)x).ToList();
+
         [Reactive]
         public int ScanProgress { get; private set; }
 
         [Reactive]
         public string Subnet { get; set; }
 
-        public ReactiveCommand<Unit, NetworkDevice> StartScan { get; }
-
-        public ReactiveCommand<Unit, Unit> AbortScan { get; }
-
         [Reactive]
         public string FilterText { get; set; }
 
         [Reactive]
         public long ElapsedTime { get; private set; }
+
+        [Reactive]
+        public int SelectedIPIndex { get; set; }
+
+        [Reactive]
+        public uint SelectedCIDR { get; set; } = 24;
+
+        public ReactiveCommand<Unit, NetworkDevice> StartScan { get; }
+
+        public ReactiveCommand<Unit, Unit> AbortScan { get; }
 
         // ----------------------------------------------------------------------
         private CancellationTokenSource _cts;
@@ -60,6 +72,8 @@ namespace FindMyMACNotMacintosh
 
         private int _finished;
 
+        private List<NetworkInterface> _interfaces;
+
         private static readonly AsyncLazy<List<MACRecord>> _macRecords = new AsyncLazy<List<MACRecord>>(LoadMACRecords);
 
         private IDisposable _stopwatch;
@@ -72,29 +86,25 @@ namespace FindMyMACNotMacintosh
         public MainWindowViewModel()
         {
             _cts = new CancellationTokenSource();
-            //ScannedDevices = new ObservableCollection<NetworkDevice>();
-            //_stopwatch = Observable
-            //    .Interval(TimeSpan.FromMilliseconds(1))
-            //    .TakeUntil(StartScan.IsExecuting)
-            //    .ObserveOnDispatcher();
             _macRecords.Start();
+            Interfaces = new List<string>();
+            _interfaces = NetworkInterface.GetAllNetworkInterfaces().ToList();
+
+            _interfaces.ForEach(x => {
+                var ip = x.GetIPProperties()
+                    .UnicastAddresses
+                    .Where(u => u.Address.AddressFamily == AddressFamily.InterNetwork)
+                    .Select(i => i.Address).First().ToString();
+
+                Interfaces.Add($"{ip} | {x.Name}");
+            });
+
+            
 
             this.WhenAnyValue(
                 x => x.Subnet)
                 .Subscribe(UpdateIPAndNet);
 
-            //_stopwatch.Subscribe(x => ElapsedTime = TimeSpan.FromMilliseconds(x).Seconds);
-
-            //ScannedDevices.Connect().Bind(Devices).Subscribe();
-            //ScannedDevices
-            //    .Connect();
-                //.Filter(x =>
-                //    FilterText.Contains(x.IP) ||
-                //    FilterText.Contains(x.MAC) ||
-                //    //FilterText.Contains(x.Vendor ?? "") ||
-                //    FilterText.Contains(""))
-                //.Bind(Devices)
-                //.Subscribe();
 
             // Command Init
             StartScan = ReactiveCommand.CreateFromObservable(
@@ -105,7 +115,8 @@ namespace FindMyMACNotMacintosh
                     {
                         _stopwatch.Dispose();
                     }),
-                this.WhenAnyValue(x => x.canScan));
+                this.WhenAnyValue(x => x.SelectedIPIndex, (val) => val != -1));
+
             AbortScan = ReactiveCommand.Create(() => { }, StartScan.IsExecuting);
 
             StartScan.Subscribe(async x => await UpdateProgressAndDevices(x));
@@ -232,7 +243,13 @@ namespace FindMyMACNotMacintosh
             {
                 return Task.Run(async () =>
                 {
-                    var listIps = IPCalc.GetListIpInNetwork(IPAddress.Parse(_ip), _net);
+                    var listIps = IPCalc.GetListIpInNetwork(
+                        _interfaces[SelectedIPIndex]
+                            .GetIPProperties()
+                            .UnicastAddresses
+                            .Where(x => x.Address.AddressFamily == AddressFamily.InterNetwork)
+                            .Select(x => x.Address)
+                            .First(), SelectedCIDR);
                     _finished = 0;
                     _numberIPToScan = listIps.Count;
 
