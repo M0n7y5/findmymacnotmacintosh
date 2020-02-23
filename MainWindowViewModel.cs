@@ -22,6 +22,7 @@ using System.Reactive.Subjects;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using NetTools;
 
 namespace FindMyMACNotMacintosh
 {
@@ -31,11 +32,11 @@ namespace FindMyMACNotMacintosh
         public ObservableCollection<NetworkDevice> Devices { get; private set; } = new ObservableCollection<NetworkDevice>();
 
         [Reactive]
-        private List<NetworkDevice> ScannedDevices { get; set; } = new List<NetworkDevice>();
+        private List<NetworkDevice> ScannedDevices { get; set; } = new List<NetworkDevice>(250);
 
-        public List<string> Interfaces { get; set; }
+        public List<string> Interfaces { get; }
 
-        public List<uint> CIDR { get; } = Enumerable.Range(0, 32).Select(x => (uint)x).ToList();
+        public List<int> CIDR { get; } = Enumerable.Range(0, 32).ToList();
 
         [Reactive]
         public int ScanProgress { get; private set; }
@@ -53,20 +54,20 @@ namespace FindMyMACNotMacintosh
         public int SelectedIPIndex { get; set; }
 
         [Reactive]
-        public uint SelectedCIDR { get; set; } = 24;
+        public int SelectedCIDR { get; set; } = 24;
 
         public ReactiveCommand<Unit, NetworkDevice> StartScan { get; }
 
         public ReactiveCommand<Unit, Unit> AbortScan { get; }
 
         // ----------------------------------------------------------------------
-        private CancellationTokenSource _cts;
+        //private CancellationTokenSource _cts;
 
-        private string _ip;
+        //private string _ip;
 
-        private uint _net;
+        //private uint _net;
 
-        private string[] _filter;
+        //private string[] _filter;
 
         private int _numberIPToScan;
 
@@ -85,9 +86,9 @@ namespace FindMyMACNotMacintosh
 
         public MainWindowViewModel()
         {
-            _cts = new CancellationTokenSource();
+            //_cts = new CancellationTokenSource();
             _macRecords.Start();
-            Interfaces = new List<string>();
+            Interfaces = new List<string>(25);
             _interfaces = NetworkInterface.GetAllNetworkInterfaces().ToList();
 
             _interfaces.ForEach(x => {
@@ -99,12 +100,9 @@ namespace FindMyMACNotMacintosh
                 Interfaces.Add($"{ip} | {x.Name}");
             });
 
-            
-
             this.WhenAnyValue(
                 x => x.Subnet)
                 .Subscribe(UpdateIPAndNet);
-
 
             // Command Init
             StartScan = ReactiveCommand.CreateFromObservable(
@@ -119,7 +117,7 @@ namespace FindMyMACNotMacintosh
 
             AbortScan = ReactiveCommand.Create(() => { }, StartScan.IsExecuting);
 
-            StartScan.Subscribe(async x => await UpdateProgressAndDevices(x));
+            StartScan.Subscribe(async x => await UpdateProgressAndDevices(x).ConfigureAwait(true));
             StartScan.ThrownExceptions.Subscribe(x => Console.WriteLine(x.Message));
 
             this.WhenAnyValue(x => x.FilterText).Subscribe(x => UpdateDevices());
@@ -136,7 +134,7 @@ namespace FindMyMACNotMacintosh
                     csv.Parser.Configuration.Delimiter = ",";
                     return csv.GetRecords<MACRecord>().ToList();
                 }
-            });
+            }).ConfigureAwait(true);
         }
 
         private void UpdateIPAndNet(string subnet)
@@ -155,15 +153,15 @@ namespace FindMyMACNotMacintosh
                 return;
             }
 
-            if (IPAddress.TryParse(ipSub[0], out IPAddress ip))
-            {
-                _ip = ipSub[0];
-            }
+            //if (IPAddress.TryParse(ipSub[0], out IPAddress ip))
+            //{
+            //    _ip = ipSub[0];
+            //}
 
-            if (uint.TryParse(ipSub[1], out uint val))
-            {
-                _net = val;
-            }
+            //if (uint.TryParse(ipSub[1], out uint val))
+            //{
+            //    _net = val;
+            //}
 
             canScan = true;
         }
@@ -171,31 +169,11 @@ namespace FindMyMACNotMacintosh
 
         void UpdateDevices()
         {
-
-            //Devices.Clear
-            //    .Connect()
-            //    .Filter(x =>
-            //        FilterText.Contains(x.IP) ||
-            //        FilterText.Contains(x.MAC) ||
-            //        //FilterText.Contains(x.Vendor ?? "") ||
-            //        FilterText.Contains("")).obser;
-
-            //Devices = ScannedDevices
-            //    .ToObservableChangeSet()
-            //    .Filter(x => FilterText.Contains(x.IP) ||
-            //        FilterText.Contains(x.MAC) ||
-            //        //FilterText.Contains(x.Vendor ?? "") ||
-            //        FilterText.Contains(""))
-            //    .AsObservableList();
-
-            //if (string.IsNullOrEmpty(FilterText))
-            //    FilterText = string.Empty;
-
             var tmp = ScannedDevices
                 .Where(x =>
                     string.IsNullOrEmpty(FilterText) ||
-                    x.IP.Contains(FilterText) ||
-                    x.MAC.Contains(FilterText) ||
+                    x.IP.Contains(FilterText, StringComparison.InvariantCultureIgnoreCase) ||
+                    x.MAC.Contains(FilterText, StringComparison.InvariantCultureIgnoreCase) ||
                     (x.Vendor?.Contains(FilterText, StringComparison.InvariantCultureIgnoreCase) ?? false)
                     //FilterText.Contains("")
                     ).ToList();
@@ -215,48 +193,51 @@ namespace FindMyMACNotMacintosh
                             x => x.Assigment.Equals(
                                 device.MAC
                                     .Substring(0, 8)
-                                    .Replace(":", "")
+                                    .Replace(":", "", StringComparison.InvariantCultureIgnoreCase)
                                 , StringComparison.InvariantCultureIgnoreCase))
                         ?.OrganizationName;
                     ScannedDevices.Add(device);
                 }
 
 
-            ScanProgress = Convert.ToInt32((((float)_finished++ / _numberIPToScan) * 100));
+            ScanProgress = (int)Math.Round((((float)++_finished / _numberIPToScan) * 100));
             UpdateDevices();
         }
 
         IObservable<NetworkDevice> StartScanHandler()
         {
             ScannedDevices.Clear();
+            ScanProgress = 0;
             //Devices.Clear();
 
             _stopwatch = Observable
-                .Interval(TimeSpan.FromMilliseconds(1), RxApp.MainThreadScheduler)
+                .Interval(TimeSpan.FromMilliseconds(1.0d), RxApp.MainThreadScheduler)
                 //.TakeUntil(StartScan.CanExecute)   
                 .ObserveOnDispatcher()
                 .SubscribeOnDispatcher()
                 .Subscribe(x => ElapsedTime = x);
 
-
             return Observable.Create<NetworkDevice>((obs, cts) =>
             {
                 return Task.Run(async () =>
                 {
-                    var listIps = IPCalc.GetListIpInNetwork(
+                    var listIps = new IPAddressRange(
                         _interfaces[SelectedIPIndex]
                             .GetIPProperties()
                             .UnicastAddresses
                             .Where(x => x.Address.AddressFamily == AddressFamily.InterNetwork)
                             .Select(x => x.Address)
-                            .First(), SelectedCIDR);
+                            .First(), SelectedCIDR)
+                        .AsEnumerable();
+                    
                     _finished = 0;
-                    _numberIPToScan = listIps.Count;
+
+                    _numberIPToScan = listIps.Count();
 
                     listIps.AsParallel()
                         .WithCancellation(cts)
-                        .WithMergeOptions(ParallelMergeOptions.NotBuffered)
-                        .WithDegreeOfParallelism(_numberIPToScan)
+                        .WithMergeOptions(ParallelMergeOptions.FullyBuffered)
+                        .WithDegreeOfParallelism(255)
                         .ForAll(x =>
                         {
                             if (cts.IsCancellationRequested)
@@ -282,6 +263,8 @@ namespace FindMyMACNotMacintosh
                                 MAC = mac.ToUpperInvariant()
                             });
                         });
+
+                    listIps = null;
                 }, cts);
             });
         }

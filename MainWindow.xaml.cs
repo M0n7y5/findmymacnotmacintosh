@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using AdonisUI.Extensions;
 using AdonisUI;
 using AdonisUI.Controls;
+using System.Globalization;
 
 namespace FindMyMACNotMacintosh
 {
@@ -123,9 +124,7 @@ namespace FindMyMACNotMacintosh
                 this.OneWayBind(ViewModel,
                     vm => vm.ElapsedTime,
                     v => v.elapsedTime.Text, 
-                    value => 
-                        (TimeSpan.FromMilliseconds(value).TotalSeconds * 10)
-                        .ToString("00:00.00"))
+                    value => milisStringHandler(value))
                     .DisposeWith(d);
 
                 this.Bind(ViewModel,
@@ -133,24 +132,27 @@ namespace FindMyMACNotMacintosh
                     v => v.FilterBox.Text)
                     .DisposeWith(d);
 
-
-
                 this.WhenAnyValue(
                         x => x.ViewModel.ScanProgress, 
                         x => x == 100)
                     .Subscribe(ProgBarFinishedHandler);
 
-
                 //this.OneWayBind(ViewModel,
                 //    vm => vm.StartScan.IsExecuting,
                 //    v => v.ProgBar.IsIndeterminate)
                 //.DisposeWith(d);
-
-
             });
         }
 
+        private string milisStringHandler(long value)
+        {
+            TimeSpan ts = TimeSpan.FromMilliseconds(value * 10);
 
+            return string.Format(
+                CultureInfo.InvariantCulture, 
+                "{0:00}:{1:00}.{2:00}", 
+                ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
+        }
 
         private void ProgBarFinishedHandler(bool x) {
             ProgressBarExtension.SetIsProgressAnimationEnabled(ProgBar, !x);

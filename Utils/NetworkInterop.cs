@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Net;
 using System.Runtime.InteropServices;
 
@@ -24,7 +25,7 @@ namespace FindMyMACNotMacintosh.Utils
 
             string[] res = new string[macAddrLen];
             for (int i = 0; i < macAddrLen; i++)
-                res[i] = macAddr[i].ToString("x2");
+                res[i] = macAddr[i].ToString("X2", CultureInfo.InvariantCulture);
 
             mac = string.Join(":", res);
 

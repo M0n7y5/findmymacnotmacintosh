@@ -1,0 +1,3 @@
+[submodule "adonis-ui"]
+	path = adonis-ui
+	url = https://github.com/benruehl/adonis-ui.git

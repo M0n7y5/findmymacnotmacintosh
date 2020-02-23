@@ -20,7 +20,7 @@
     <Window.Style>
         <Style BasedOn="{StaticResource {x:Type Window}}" TargetType="Window" />
     </Window.Style>
-    <adonisControls:AdonisWindow.TitleBarContent>
+    <!--<adonisControls:AdonisWindow.TitleBarContent>
         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
             <Button
                 Content="?"
@@ -28,7 +28,7 @@
                 FontSize="14"
                 Style="{DynamicResource {x:Static adonisUi:Styles.WindowButton}}" />
         </StackPanel>
-    </adonisControls:AdonisWindow.TitleBarContent>
+    </adonisControls:AdonisWindow.TitleBarContent>-->
 
     <DockPanel>
         <StatusBar DockPanel.Dock="Bottom">
@@ -42,10 +42,10 @@
                 <StackPanel VerticalAlignment="Stretch" Orientation="Horizontal">
                     <TextBlock Text="Elapsed time: " />
                     <TextBlock x:Name="elapsedTime" Text="2.1" />
-                    <TextBlock
+                    <!--<TextBlock
                         Margin="1,0,0,0"
                         VerticalAlignment="Stretch"
-                        Text="s" />
+                        Text="s" />-->
                 </StackPanel>
             </StatusBarItem>
         </StatusBar>

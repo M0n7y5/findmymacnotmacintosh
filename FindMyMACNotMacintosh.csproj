@@ -5,22 +5,50 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
     <Platforms>AnyCPU;x86</Platforms>
-    <ApplicationIcon>icon.ico</ApplicationIcon>
-    <StartupObject>FindMyMACNotMacintosh.App</StartupObject>
-    <!--<PublishTrimmed>true</PublishTrimmed>
+    <PublishTrimmed>false</PublishTrimmed>
     <PublishReadyToRun>false</PublishReadyToRun>
-    <PublishSingleFile>false</PublishSingleFile>-->
+    <PublishSingleFile>false</PublishSingleFile>
+    <StartupObject>FindMyMACNotMacintosh.App</StartupObject>
+    <ApplicationIcon>iconfinder_67_111124_uzB_icon.ico</ApplicationIcon>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <!--<RuntimeIdentifier>win-x64</RuntimeIdentifier>-->
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="adonis-ui\**" />
+    <Compile Remove="Properties\**" />
+    <Compile Remove="screen\**" />
+    <Compile Remove="tools\**" />
+    <EmbeddedResource Remove="adonis-ui\**" />
+    <EmbeddedResource Remove="Properties\**" />
+    <EmbeddedResource Remove="screen\**" />
+    <EmbeddedResource Remove="tools\**" />
+    <None Remove="adonis-ui\**" />
+    <None Remove="Properties\**" />
+    <None Remove="screen\**" />
+    <None Remove="tools\**" />
+    <Page Remove="adonis-ui\**" />
+    <Page Remove="Properties\**" />
+    <Page Remove="screen\**" />
+    <Page Remove="tools\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove=".gitattributes" />
+    <None Remove=".gitignore" />
+    <None Remove="icon.ico" />
+    <None Remove="README.md" />
     <None Remove="Resources\oui.csv" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AdonisUI" Version="1.13.0" />
     <PackageReference Include="AdonisUI.ClassicTheme" Version="1.13.0" />
     <PackageReference Include="CsvHelper" Version="15.0.0" />
+    <PackageReference Include="IPAddressRange" Version="4.0.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Nito.AsyncEx" Version="5.0.0" />
     <PackageReference Include="Nito.AsyncEx.Tasks" Version="5.0.0" />
     <PackageReference Include="ReactiveUI" Version="11.1.23" />
@@ -28,7 +56,11 @@
     <PackageReference Include="ReactiveUI.Fody" Version="11.1.23" />
     <PackageReference Include="ReactiveUI.WPF" Version="11.1.23" />
     <PackageReference Include="System.Linq.Async" Version="4.0.0" />
-    
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="adonis-ui\AdonisUI\AdonisUI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -48,12 +80,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="run.bat">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>
