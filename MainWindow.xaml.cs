@@ -18,6 +18,7 @@ using AdonisUI.Extensions;
 using AdonisUI;
 using AdonisUI.Controls;
 using System.Globalization;
+using System.Reactive.Linq;
 
 namespace FindMyMACNotMacintosh
 {
@@ -84,7 +85,7 @@ namespace FindMyMACNotMacintosh
             this.cidr.SelectedIndex = 24;
             this.ipbox.SelectedIndex = 0;
 
-            this.WhenActivated(d => 
+            this.WhenActivated(d =>
             {
                 this.OneWayBind(ViewModel,
                     vm => vm.Devices,
@@ -123,7 +124,7 @@ namespace FindMyMACNotMacintosh
 
                 this.OneWayBind(ViewModel,
                     vm => vm.ElapsedTime,
-                    v => v.elapsedTime.Text, 
+                    v => v.elapsedTime.Text,
                     value => milisStringHandler(value))
                     .DisposeWith(d);
 
@@ -133,14 +134,21 @@ namespace FindMyMACNotMacintosh
                     .DisposeWith(d);
 
                 this.WhenAnyValue(
-                        x => x.ViewModel.ScanProgress, 
+                        x => x.ViewModel.ScanProgress,
                         x => x == 100)
                     .Subscribe(ProgBarFinishedHandler);
 
-                //this.OneWayBind(ViewModel,
-                //    vm => vm.StartScan.IsExecuting,
-                //    v => v.ProgBar.IsIndeterminate)
-                //.DisposeWith(d);
+                this.WhenAnyObservable(
+                    x => x.ViewModel.StartScan.IsExecuting)
+                 .Select(x => !x)
+                 .BindTo(this, x => x.ipbox.IsEnabled)
+                 .DisposeWith(d);
+
+                this.WhenAnyObservable(
+                    x => x.ViewModel.StartScan.IsExecuting)
+                 .Select(x => !x)
+                 .BindTo(this, x => x.cidr.IsEnabled)
+                 .DisposeWith(d);
             });
         }
 
@@ -149,12 +157,13 @@ namespace FindMyMACNotMacintosh
             TimeSpan ts = TimeSpan.FromMilliseconds(value * 10);
 
             return string.Format(
-                CultureInfo.InvariantCulture, 
-                "{0:00}:{1:00}.{2:00}", 
+                CultureInfo.InvariantCulture,
+                "{0:00}:{1:00}.{2:00}",
                 ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
         }
 
-        private void ProgBarFinishedHandler(bool x) {
+        private void ProgBarFinishedHandler(bool x)
+        {
             ProgressBarExtension.SetIsProgressAnimationEnabled(ProgBar, !x);
             ProgBar.Foreground = x ? GreenBrush : AdonDefault;
 

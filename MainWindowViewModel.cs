@@ -91,7 +91,8 @@ namespace FindMyMACNotMacintosh
             Interfaces = new List<string>(25);
             _interfaces = NetworkInterface.GetAllNetworkInterfaces().ToList();
 
-            _interfaces.ForEach(x => {
+            _interfaces.ForEach(x =>
+            {
                 var ip = x.GetIPProperties()
                     .UnicastAddresses
                     .Where(u => u.Address.AddressFamily == AddressFamily.InterNetwork)
@@ -176,43 +177,47 @@ namespace FindMyMACNotMacintosh
                     x.MAC.Contains(FilterText, StringComparison.InvariantCultureIgnoreCase) ||
                     (x.Vendor?.Contains(FilterText, StringComparison.InvariantCultureIgnoreCase) ?? false)
                     //FilterText.Contains("")
-                    ).ToList();
+                    );
 
-            Devices.Clear();
-            Devices.AddRange(tmp);
+            Devices = new ObservableCollection<NetworkDevice>(tmp);
+        }
+
+        private void UpdateProggress()
+        {
+            ScanProgress = (int)Math.Round((((float)++_finished / _numberIPToScan) * 100));
         }
 
         async Task UpdateProgressAndDevices(NetworkDevice device)
         {
-            if (device != null)
-                if (!string.IsNullOrEmpty(device.MAC))
-                {
-                    var rec = await _macRecords;
-                    device.Vendor = rec
-                        .FirstOrDefault(
-                            x => x.Assigment.Equals(
-                                device.MAC
-                                    .Substring(0, 8)
-                                    .Replace(":", "", StringComparison.InvariantCultureIgnoreCase)
-                                , StringComparison.InvariantCultureIgnoreCase))
-                        ?.OrganizationName;
-                    ScannedDevices.Add(device);
-                }
+            if (device == null)
+            {
+                UpdateProggress();
+                return;
+            }
 
+            var rec = await _macRecords;
+            device.Vendor = rec
+                .FirstOrDefault(
+                    x => x.Assigment.Equals(
+                        device.MAC
+                            .Substring(0, 8)
+                            .Replace(":", "", StringComparison.InvariantCultureIgnoreCase)
+                        , StringComparison.InvariantCultureIgnoreCase))
+                ?.OrganizationName;
 
-            ScanProgress = (int)Math.Round((((float)++_finished / _numberIPToScan) * 100));
+            ScannedDevices.Add(device);
             UpdateDevices();
+            UpdateProggress();
         }
 
         IObservable<NetworkDevice> StartScanHandler()
         {
             ScannedDevices.Clear();
             ScanProgress = 0;
-            //Devices.Clear();
+            Devices.Clear();
 
             _stopwatch = Observable
                 .Interval(TimeSpan.FromMilliseconds(1.0d), RxApp.MainThreadScheduler)
-                //.TakeUntil(StartScan.CanExecute)   
                 .ObserveOnDispatcher()
                 .SubscribeOnDispatcher()
                 .Subscribe(x => ElapsedTime = x);
@@ -229,7 +234,7 @@ namespace FindMyMACNotMacintosh
                             .Select(x => x.Address)
                             .First(), SelectedCIDR)
                         .AsEnumerable();
-                    
+
                     _finished = 0;
 
                     _numberIPToScan = listIps.Count();
