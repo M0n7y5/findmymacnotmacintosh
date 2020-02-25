@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MACDBSerializer": {
+      "commandName": "Project",
+      "commandLineArgs": "-i oui.csv -o macdb.bin"
+    }
+  }
+}

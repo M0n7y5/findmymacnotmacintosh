@@ -1,0 +1,174 @@
+﻿<adonisControls:AdonisWindow x:Class="AdonisUI.Demo.MainWindow"
+                             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                             xmlns:local="clr-namespace:AdonisUI.Demo"
+                             xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
+                             xmlns:adonisControls="clr-namespace:AdonisUI.Controls;assembly=AdonisUI"
+                             xmlns:adonisExtensions="clr-namespace:AdonisUI.Extensions;assembly=AdonisUI"
+                             mc:Ignorable="d"
+                             Title="Adonis UI"
+                             Width="1280"
+                             Height="720">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Views.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+        <DockPanel LastChildFill="True"
+                   HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch">
+
+            <Grid DockPanel.Dock="Top">
+
+                <Border Background="{DynamicResource {x:Static adonisUi:Brushes.AccentBrush}}"
+                        adonisExtensions:LayerExtension.Layer="3"
+                        VerticalAlignment="Top">
+
+                    <DockPanel LastChildFill="False">
+
+                        <UniformGrid DockPanel.Dock="Right"
+                                     Columns="2"
+                                     Margin="{adonisUi:Space 1}">
+
+                            <Button Style="{DynamicResource {x:Static adonisUi:Styles.AccentButton}}"
+                                    Content="Previous"
+                                    Command="{Binding PreviousViewCommand}"
+                                    Margin="{adonisUi:Space 1, 0, 0, 0}"/>
+
+                            <Button Style="{DynamicResource {x:Static adonisUi:Styles.AccentButton}}"
+                                    Content="Next"
+                                    Command="{Binding NextViewCommand}"/>
+
+                        </UniformGrid>
+
+                    </DockPanel>
+
+                </Border>
+
+            </Grid>
+
+            <StatusBar DockPanel.Dock="Bottom">
+                <StatusBarItem Content="Ready"/>
+            </StatusBar>
+
+            <Grid>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid>
+                    <GroupBox Padding="0"
+                              MinWidth="132">
+                        <GroupBox.Header>
+                            <TextBlock Text="Actions"
+                                       Margin="{adonisUi:Space 1}"/>
+                        </GroupBox.Header>
+
+                        <StackPanel Orientation="Vertical"
+                                    Margin="{adonisUi:Space 0, 1, 0, 0}">
+
+                            <Button Content="Change Theme"
+                                    Style="{DynamicResource {x:Static adonisUi:Styles.ToolbarButton}}"
+                                    Click="ChangeTheme"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    Padding="16, 8"/>
+
+                            <Button Command="{Binding ToggleIsEnabledCommand}"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    Padding="16, 8">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Static adonisUi:Styles.ToolbarButton}}">
+                                        <Setter Property="Content" Value="Disable All"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsEnabled}" Value="False">
+                                                <Setter Property="Content" Value="Enable All"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+
+                            <Button Content="Check Issues"
+                                    Style="{DynamicResource {x:Static adonisUi:Styles.ToolbarButton}}"
+                                    Click="OpenIssueDialog"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    Padding="16, 8"/>
+
+                            <Button Click="ToggleAdonisResources"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    Padding="16, 8">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Static adonisUi:Styles.ToolbarButton}}">
+                                        <Setter Property="Content" Value="Restore Default Styles"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsAdonisUiIncluded, RelativeSource={RelativeSource FindAncestor, AncestorType=local:MainWindow}}" Value="False">
+                                                <Setter Property="Content" Value="Add AdonisUI Styles"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+
+                        </StackPanel>
+                    </GroupBox>
+                </Grid>
+
+                <Grid Grid.Column="1"
+                      ClipToBounds="True">
+
+                    <ContentControl ContentTemplate="{DynamicResource {x:Static adonisUi:Icons.AdonisUIGrayscale}}"
+                                    Focusable="False"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom"
+                                    Opacity="0.2"
+                                    Width="600"
+                                    Height="600"
+                                    Margin="0, 0, -64, -136"/>
+
+                    <ContentControl Content="{Binding Content}"
+                                    IsEnabled="{Binding IsEnabled}"
+                                    Margin="{adonisUi:Space 1}"/>
+
+                </Grid>
+            </Grid>
+        </DockPanel>
+
+        <Grid HorizontalAlignment="Center"
+              VerticalAlignment="Top">
+
+            <Viewbox Stretch="Fill"
+                     Height="46"
+                     Width="192">
+                <Viewbox.Effect>
+                    <DropShadowEffect ShadowDepth="2"
+                                      BlurRadius="10"
+                                      Opacity="0.2"/>
+                </Viewbox.Effect>
+
+                <Path Data="M 0 0 L 20 0 L 18 8 L 2 8 Z"
+                      Fill="{DynamicResource {x:Static adonisUi:Brushes.AccentHighlightBrush}}"/>
+            </Viewbox>
+
+            <TextBlock Text="{Binding Content.Name}"
+                       TextAlignment="Center"
+                       VerticalAlignment="Center"
+                       Foreground="{DynamicResource {x:Static adonisUi:Brushes.AccentForegroundBrush}}"
+                       FontSize="14"/>
+        </Grid>
+
+    </Grid>
+
+</adonisControls:AdonisWindow>

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <IsPublishable>false</IsPublishable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommandLineArgumentsParser" Version="3.0.20" />
+    <PackageReference Include="CsvHelper" Version="15.0.0" />
+    <PackageReference Include="MessagePack" Version="2.1.90" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="oui.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
