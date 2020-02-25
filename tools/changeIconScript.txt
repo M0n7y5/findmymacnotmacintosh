@@ -1,0 +1,5 @@
+[FILENAMES]
+Open=packed/FindMyMACNotMacintosh.exe
+Save=packed/FindMyMACNotMacintosh.exe
+[COMMANDS]
+-addoverwrite ../icon.ico, ICONGROUP,MAINICON,

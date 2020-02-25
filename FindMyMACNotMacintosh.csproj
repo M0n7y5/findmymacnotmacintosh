@@ -9,7 +9,7 @@
     <PublishReadyToRun>false</PublishReadyToRun>
     <PublishSingleFile>false</PublishSingleFile>
     <StartupObject>FindMyMACNotMacintosh.App</StartupObject>
-    <ApplicationIcon>iconfinder_67_111124_uzB_icon.ico</ApplicationIcon>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <!--<RuntimeIdentifier>win-x64</RuntimeIdentifier>-->
   </PropertyGroup>
@@ -36,7 +36,6 @@
   <ItemGroup>
     <None Remove=".gitattributes" />
     <None Remove=".gitignore" />
-    <None Remove="icon.ico" />
     <None Remove="README.md" />
     <None Remove="Resources\oui.csv" />
   </ItemGroup>
