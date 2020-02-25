@@ -1,0 +1,3 @@
+[submodule "FindMyMACNotMacintosh/adonis-ui"]
+	path = FindMyMACNotMacintosh/adonis-ui
+	url = https://github.com/benruehl/adonis-ui.git
