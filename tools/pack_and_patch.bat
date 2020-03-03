@@ -1,6 +1,6 @@
 cd ..
 DEL /Q /S bin
-dotnet publish -c Release -f netcoreapp3.1
+dotnet publish -c Release -f netcoreapp3.1 /p:PublishProfile=FolderProfile1
 cd tools
 DEL /Q /S packed
 warp-packer.exe --arch windows-x64 --input_dir ../bin/Release/netcoreapp3.1/publish --exec FindMyMACNotMacintosh.exe --output packed/FindMyMACNotMacintosh.exe
