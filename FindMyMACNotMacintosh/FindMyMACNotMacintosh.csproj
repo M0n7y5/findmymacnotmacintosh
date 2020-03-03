@@ -1,0 +1,84 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Platforms>AnyCPU;x86</Platforms>
+    <PublishTrimmed>false</PublishTrimmed>
+    <PublishReadyToRun>false</PublishReadyToRun>
+    <PublishSingleFile>false</PublishSingleFile>
+    <StartupObject>FindMyMACNotMacintosh.App</StartupObject>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <!--<RuntimeIdentifier>win-x64</RuntimeIdentifier>-->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="adonis-ui\**" />
+    <Compile Remove="Properties\**" />
+    <Compile Remove="screen\**" />
+    <Compile Remove="Services\**" />
+    <Compile Remove="tools\**" />
+    <EmbeddedResource Remove="adonis-ui\**" />
+    <EmbeddedResource Remove="Properties\**" />
+    <EmbeddedResource Remove="screen\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <EmbeddedResource Remove="tools\**" />
+    <None Remove="adonis-ui\**" />
+    <None Remove="Properties\**" />
+    <None Remove="screen\**" />
+    <None Remove="Services\**" />
+    <None Remove="tools\**" />
+    <Page Remove="adonis-ui\**" />
+    <Page Remove="Properties\**" />
+    <Page Remove="screen\**" />
+    <Page Remove="Services\**" />
+    <Page Remove="tools\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove=".gitattributes" />
+    <None Remove=".gitignore" />
+    <None Remove="README.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AdonisUI.ClassicTheme" Version="1.13.0" />
+    <PackageReference Include="CsvHelper" Version="15.0.0" />
+    <PackageReference Include="IPAddressRange" Version="4.0.0" />
+    <PackageReference Include="MessagePack" Version="2.1.90" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Nito.AsyncEx" Version="5.0.0" />
+    <PackageReference Include="Nito.AsyncEx.Tasks" Version="5.0.0" />
+    <PackageReference Include="ReactiveUI" Version="11.2.1" />
+    <PackageReference Include="ReactiveUI.Events.WPF" Version="11.2.1" />
+    <PackageReference Include="ReactiveUI.Fody" Version="11.2.1" />
+    <PackageReference Include="ReactiveUI.WPF" Version="11.2.1" />
+    <PackageReference Include="System.Linq.Async" Version="4.0.0" />
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="adonis-ui\AdonisUI\AdonisUI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

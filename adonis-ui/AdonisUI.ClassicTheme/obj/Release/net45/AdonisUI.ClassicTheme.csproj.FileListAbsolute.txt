@@ -1,0 +1,8 @@
+C:\Users\M0N7Y5\Source\Repos\findmymacnotmacintosh\adonis-ui\AdonisUI.ClassicTheme\obj\Release\net45\DefaultStyles\TextBlock.baml
+C:\Users\M0N7Y5\Source\Repos\findmymacnotmacintosh\adonis-ui\AdonisUI.ClassicTheme\obj\Release\net45\Dimensions.baml
+C:\Users\M0N7Y5\Source\Repos\findmymacnotmacintosh\adonis-ui\AdonisUI.ClassicTheme\obj\Release\net45\Resources.baml
+C:\Users\M0N7Y5\Source\Repos\findmymacnotmacintosh\adonis-ui\AdonisUI.ClassicTheme\obj\Release\net45\Templates\DatePickerDropDownButton.baml
+C:\Users\M0N7Y5\Source\Repos\findmymacnotmacintosh\adonis-ui\AdonisUI.ClassicTheme\obj\Release\net45\Templates\Expander.baml
+C:\Users\M0N7Y5\Source\Repos\findmymacnotmacintosh\adonis-ui\AdonisUI.ClassicTheme\obj\Release\net45\AdonisUI.ClassicTheme_MarkupCompile.cache
+C:\Users\M0N7Y5\Source\Repos\findmymacnotmacintosh\adonis-ui\AdonisUI.ClassicTheme\obj\Release\net45\AdonisUI.ClassicTheme_MarkupCompile.lref
+C:\Users\M0N7Y5\Source\Repos\findmymacnotmacintosh\adonis-ui\AdonisUI.ClassicTheme\obj\Release\net45\AdonisUI.ClassicTheme.csprojAssemblyReference.cache
