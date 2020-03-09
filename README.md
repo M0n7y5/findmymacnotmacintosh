@@ -1,5 +1,5 @@
 # Find my MAC not Macintosh
-Wanna just find your devices on LAN without any knowledge of ARP protocol and things like that? Well FindMyMacNotMacintosh will help you then! Just crack your fingers, download latest release of this program and then use your BFU skills to press one frickin button!
+Wanna just find your devices on LAN without any knowledge of ARP protocol and things like that? Well **"Find My Mac Not Macintosh"** can help you with that! Just crack your fingers, download latest release of this program and then use your BFU skills to press one frickin button!
 
 It's that ez ...
 
@@ -8,14 +8,14 @@ It's that ez ...
 ## Main features (aka buzzwords):
 - It can recognize Vendor from MAC
 - You can filter found devices by MAC, IP and Vendor
-- *Smol* size (only 3.7MB)
+- *Smol* size (only 3.2MB)
 - It can scan Full CIDR /0
 - No need for WinCap driver etc.
 - It's **fast** *(can scan  /24 in 25 sec and less, depends on router)*
 - Easy to use!
 - And most importantly ... **IT HAS DARK MODE!!!** 
 
-Used tools & technologies 
+## Used tools & technologies 
 - .Net Core 3.1
 - AMC Patcher
     - https://github.com/TAbdiukov/AMC_patcher-CLI
@@ -27,4 +27,10 @@ Used tools & technologies
     - https://github.com/benruehl/adonis-ui
 - Reactive UI
     - https://github.com/reactiveui/ReactiveUI
-and more ...
+- etc ;)
+
+# Contribution
+I'll be glad for any contribution & pull requests
+
+# License
+Don't redistribute this software anywhere. More in License file. 
