@@ -13,7 +13,7 @@ It's that ez ...
 - You can filter found devices by MAC, IP and Vendor
 - *Smol* size (only 3.2MB)
 - It can scan Full CIDR /0
-- No need for WinCap driver etc.
+- No need for WinPcap driver etc.
 - It's **fast** *(can scan  /24 in 25 sec and less, depends on router)*
 - Easy to use!
 - And most importantly ... **IT HAS DARK MODE!!!** 
