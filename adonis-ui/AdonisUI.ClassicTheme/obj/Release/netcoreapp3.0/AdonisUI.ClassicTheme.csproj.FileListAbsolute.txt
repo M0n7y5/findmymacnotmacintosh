@@ -1,8 +1,0 @@
-C:\Users\M0N7Y5\Source\Repos\findmymacnotmacintosh\adonis-ui\AdonisUI.ClassicTheme\obj\Release\netcoreapp3.0\AdonisUI.ClassicTheme.csprojAssemblyReference.cache
-C:\Users\M0N7Y5\Source\Repos\findmymacnotmacintosh\adonis-ui\AdonisUI.ClassicTheme\obj\Release\netcoreapp3.0\DefaultStyles\TextBlock.baml
-C:\Users\M0N7Y5\Source\Repos\findmymacnotmacintosh\adonis-ui\AdonisUI.ClassicTheme\obj\Release\netcoreapp3.0\Dimensions.baml
-C:\Users\M0N7Y5\Source\Repos\findmymacnotmacintosh\adonis-ui\AdonisUI.ClassicTheme\obj\Release\netcoreapp3.0\Resources.baml
-C:\Users\M0N7Y5\Source\Repos\findmymacnotmacintosh\adonis-ui\AdonisUI.ClassicTheme\obj\Release\netcoreapp3.0\Templates\DatePickerDropDownButton.baml
-C:\Users\M0N7Y5\Source\Repos\findmymacnotmacintosh\adonis-ui\AdonisUI.ClassicTheme\obj\Release\netcoreapp3.0\Templates\Expander.baml
-C:\Users\M0N7Y5\Source\Repos\findmymacnotmacintosh\adonis-ui\AdonisUI.ClassicTheme\obj\Release\netcoreapp3.0\AdonisUI.ClassicTheme_MarkupCompile.cache
-C:\Users\M0N7Y5\Source\Repos\findmymacnotmacintosh\adonis-ui\AdonisUI.ClassicTheme\obj\Release\netcoreapp3.0\AdonisUI.ClassicTheme_MarkupCompile.lref
