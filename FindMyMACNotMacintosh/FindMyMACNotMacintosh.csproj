@@ -44,8 +44,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AdonisUI.ClassicTheme" Version="1.13.0" />
-    <PackageReference Include="CsvHelper" Version="15.0.0" />
+    <PackageReference Include="AdonisUI" Version="1.14.0" />
+    <PackageReference Include="AdonisUI.ClassicTheme" Version="1.14.0" />
     <PackageReference Include="IPAddressRange" Version="4.0.0" />
     <PackageReference Include="MessagePack" Version="2.1.90" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
@@ -54,16 +54,12 @@
     </PackageReference>
     <PackageReference Include="Nito.AsyncEx" Version="5.0.0" />
     <PackageReference Include="Nito.AsyncEx.Tasks" Version="5.0.0" />
-    <PackageReference Include="ReactiveUI" Version="11.2.1" />
-    <PackageReference Include="ReactiveUI.Events.WPF" Version="11.2.1" />
-    <PackageReference Include="ReactiveUI.Fody" Version="11.2.1" />
-    <PackageReference Include="ReactiveUI.WPF" Version="11.2.1" />
+    <PackageReference Include="ReactiveUI" Version="11.2.3" />
+    <PackageReference Include="ReactiveUI.Events.WPF" Version="11.2.3" />
+    <PackageReference Include="ReactiveUI.Fody" Version="11.2.3" />
+    <PackageReference Include="ReactiveUI.WPF" Version="11.2.3" />
     <PackageReference Include="System.Linq.Async" Version="4.0.0" />
 
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="adonis-ui\AdonisUI\AdonisUI.csproj" />
   </ItemGroup>
 
   <ItemGroup>

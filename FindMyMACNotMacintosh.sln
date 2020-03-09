@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MACDBSerializer", "MACDBSer
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FindMyMACNotMacintosh", "FindMyMACNotMacintosh\FindMyMACNotMacintosh.csproj", "{E0770FDF-7C3C-40DC-A6D6-6F00D3FD1007}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdonisUI", "FindMyMACNotMacintosh\adonis-ui\AdonisUI\AdonisUI.csproj", "{17BC859D-D002-4D31-A9B4-D5E420D076C0}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,18 +41,6 @@ Global
 		{E0770FDF-7C3C-40DC-A6D6-6F00D3FD1007}.Release|x64.Build.0 = Release|Any CPU
 		{E0770FDF-7C3C-40DC-A6D6-6F00D3FD1007}.Release|x86.ActiveCfg = Release|x86
 		{E0770FDF-7C3C-40DC-A6D6-6F00D3FD1007}.Release|x86.Build.0 = Release|x86
-		{17BC859D-D002-4D31-A9B4-D5E420D076C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{17BC859D-D002-4D31-A9B4-D5E420D076C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{17BC859D-D002-4D31-A9B4-D5E420D076C0}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{17BC859D-D002-4D31-A9B4-D5E420D076C0}.Debug|x64.Build.0 = Debug|Any CPU
-		{17BC859D-D002-4D31-A9B4-D5E420D076C0}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{17BC859D-D002-4D31-A9B4-D5E420D076C0}.Debug|x86.Build.0 = Debug|Any CPU
-		{17BC859D-D002-4D31-A9B4-D5E420D076C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{17BC859D-D002-4D31-A9B4-D5E420D076C0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{17BC859D-D002-4D31-A9B4-D5E420D076C0}.Release|x64.ActiveCfg = Release|Any CPU
-		{17BC859D-D002-4D31-A9B4-D5E420D076C0}.Release|x64.Build.0 = Release|Any CPU
-		{17BC859D-D002-4D31-A9B4-D5E420D076C0}.Release|x86.ActiveCfg = Release|Any CPU
-		{17BC859D-D002-4D31-A9B4-D5E420D076C0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
