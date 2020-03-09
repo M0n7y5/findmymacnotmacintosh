@@ -5,6 +5,9 @@ It's that ez ...
 
 ![](screen/screen.png)
 
+# Download
+✅ https://github.com/M0n7y5/findmymacnotmacintosh/releases/latest
+
 ## Main features (aka buzzwords):
 - It can recognize Vendor from MAC
 - You can filter found devices by MAC, IP and Vendor
@@ -31,6 +34,3 @@ It's that ez ...
 
 # Contribution
 I'll be glad for any contribution & pull requests
-
-# License
-Don't redistribute this software anywhere. More in License file. 
